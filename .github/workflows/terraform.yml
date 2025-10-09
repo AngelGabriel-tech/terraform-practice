@@ -17,10 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check for lockfile
-        id: check-lockfile
-        run: |
-          if [ -f .terraform.lock.hcl ]; then echo "lockfile_exists=true" >> $GITHUB_OUTPUT; else echo "lockfile_exists=false" >> $GITHUB_OUTPUT; fi
+      # lockfile check moved to after plan so that terraform init/plan can create it
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -47,6 +44,11 @@ jobs:
         with:
           name: tfplan
           path: tfplan
+
+      - name: Check for lockfile
+        id: check-lockfile
+        run: |
+          if [ -f .terraform.lock.hcl ]; then echo "lockfile_exists=true" >> $GITHUB_OUTPUT; else echo "lockfile_exists=false" >> $GITHUB_OUTPUT; fi
 
       - name: Upload lockfile
         if: steps.check-lockfile.outputs.lockfile_exists == 'true'
