@@ -10,6 +10,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Terraform lock file
+.terraform.lock.hcl
 
 
 # CLI local config
