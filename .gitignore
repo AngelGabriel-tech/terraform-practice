@@ -2,7 +2,6 @@
 .terraform/
 *.tfstate
 *.tfstate.backup
-*.tfvars
 crash.log
 override.tf
 override.tf.json
@@ -14,9 +13,6 @@ terraform.rc
 # Terraform lock file
 .terraform.lock.hcl
 
-# Sensitive variable files
-*.tfvars
-*.tfvars.json
 
 # CLI local config
 .terraform.d/
