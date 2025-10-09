@@ -41,6 +41,13 @@ jobs:
           name: tfplan
           path: tfplan
 
+      - name: Upload lockfile
+        if: exists('.terraform.lock.hcl')
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf-lockfile
+          path: .terraform.lock.hcl
+
   terraform-apply:
     name: Terraform Apply (manual)
     needs: terraform-plan
@@ -68,6 +75,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
+
+      - name: Download lockfile
+        uses: actions/download-artifact@v4
+        with:
+          name: tf-lockfile
+
+      - name: Terraform Init (with lockfile)
+        run: |
+          if [ -f .terraform.lock.hcl ]; then echo "Using lockfile"; fi
+          terraform init -input=false
 
       - name: Terraform Apply
         run: terraform apply -input=false tfplan
