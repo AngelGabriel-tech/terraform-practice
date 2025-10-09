@@ -9,11 +9,18 @@ jobs:
   terraform-plan:
     name: Terraform Plan
     runs-on: ubuntu-latest
+    outputs:
+      lockfile_exists: ${{ steps.check-lockfile.outputs.lockfile_exists }}
     env:
       TF_IN_AUTOMATION: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Check for lockfile
+        id: check-lockfile
+        run: |
+          if [ -f .terraform.lock.hcl ]; then echo "lockfile_exists=true" >> $GITHUB_OUTPUT; else echo "lockfile_exists=false" >> $GITHUB_OUTPUT; fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -42,7 +49,7 @@ jobs:
           path: tfplan
 
       - name: Upload lockfile
-        if: exists('.terraform.lock.hcl')
+        if: steps.check-lockfile.outputs.lockfile_exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tf-lockfile
@@ -77,6 +84,7 @@ jobs:
           name: tfplan
 
       - name: Download lockfile
+        if: needs.terraform-plan.outputs.lockfile_exists == 'true'
         uses: actions/download-artifact@v4
         with:
           name: tf-lockfile
