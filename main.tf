@@ -5,6 +5,11 @@ terraform {
         version = "~> 5.0"
       }
     }
+    backend "s3" {
+      bucket = "conclase-bucket-03"
+      key    = "terraform.tfstate"
+      region = "eu-north-1"
+    }
 }
 
 
